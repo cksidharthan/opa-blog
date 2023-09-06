@@ -48,13 +48,13 @@ func OpaMiddlware() gin.HandlerFunc {
 		}
 
 		// print the action and username headers
-		log.Printf("action: %v\n", c.Request.Header.Get("action"))
-		log.Printf("username: %v\n", c.Request.Header.Get("username"))
+		log.Printf("role: %v\n", c.Request.Header.Get("role"))
+		log.Printf("access: %v\n", c.Request.Header.Get("access"))
 
 		// evaluate query
 		result, err := query.Eval(context.Background(), rego.EvalInput(map[string]interface{}{
-			"username": c.Request.Header.Get("username"),
-			"action":   c.Request.Header.Get("action"),
+			"role":   c.Request.Header.Get("role"),
+			"access": c.Request.Header.Get("access"),
 		}))
 		if err != nil {
 			log.Printf("error evaluating query: %v\n", err)

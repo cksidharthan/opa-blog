@@ -5,13 +5,13 @@ import future.keywords
 default allow = false
 
 allow {
-  input.username == "admin"
-  groups = ["write", "read"]
-  input.action in groups
+  input.role == "admin"
+  access_groups = ["write", "read"]
+  input.access in access_groups
 }
 
 allow {
-  input.username == "user"
-  groups = ["read"]
-  input.action in groups
+  input.role == "user"
+  access_groups = ["read"]
+  input.access in access_groups
 }
