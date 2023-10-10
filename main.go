@@ -2,8 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"github.com/cksidharthan/go-jaeger/pkg/client"
+	"github.com/cksidharthan/go-jaeger/pkg/trace"
 	"github.com/gin-gonic/gin"
 	"github.com/open-policy-agent/opa/rego"
+	"github.com/sirupsen/logrus"
 	"io"
 	"log"
 	"net/http"
@@ -14,7 +18,22 @@ func main() {
 	r := gin.Default()
 	r.Use(OpaMiddlware())
 
+	traceClient, err := client.New(&client.Opts{
+		CollectorURL: "http://localhost:14268/api/traces",
+		ServiceName:  "test_service",
+		Environment:  "dev",
+		Logger:       logrus.StandardLogger(),
+	})
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	defer traceClient.Disconnect(context.Background())
+
 	r.GET("/ping", func(c *gin.Context) {
+		methodTrace := trace.NewTraceWithContext(context.Background())
+		defer methodTrace.Close()
+
 		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
